@@ -48,6 +48,9 @@ export default function App() {
             <MenuItem onClick={handleClose} component="a" href="https://spiderz.cmajorb.com" target="_blank">
               Spiderz
             </MenuItem>
+            <MenuItem onClick={handleClose} component="a" href="https://www.quick-tee.com" target="_blank">
+              Quick Tee
+            </MenuItem>
           </Menu>
           {/* <Button color="inherit">Contact</Button> */}
         </Toolbar>
