@@ -3,6 +3,9 @@ import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
 import * as path from 'path';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as iam from 'aws-cdk-lib/aws-iam';
+
 
 export class BackendStack extends cdk.Stack {
   public readonly apiUrl: string;
@@ -38,5 +41,19 @@ export class BackendStack extends cdk.Stack {
       value: api.url,
       description: 'API Gateway endpoint URL',
     });
+
+    const cacheBucket = new s3.Bucket(this, 'RssCacheBucket', {
+        removalPolicy: cdk.RemovalPolicy.DESTROY, // Change to RETAIN in production
+        autoDeleteObjects: true, // Only allowed with DESTROY policy
+        lifecycleRules: [
+          {
+            expiration: cdk.Duration.days(1), // Optional: auto-delete cached files after 1 day
+          },
+        ],
+      });
+
+      cacheBucket.grantReadWrite(rssParserLambda);
+      rssParserLambda.addEnvironment('CACHE_BUCKET', cacheBucket.bucketName);
+
   }
 }
